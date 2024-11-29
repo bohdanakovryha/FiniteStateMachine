@@ -13,6 +13,7 @@ public class FiniteStateMachine {
     }
 
     public void processString(String input) {
+        input = input.toLowerCase();
         for (char ch : input.toCharArray()) {
             processChar(ch);
         }
@@ -21,35 +22,33 @@ public class FiniteStateMachine {
     private void processChar(char ch) {
         switch (currentState) {
             case S:
-                if (ch == 'T') {
+                if (ch == 't') {
                     currentState = State.ONE;
-                } else {
-                    currentState = State.S;
                 }
                 break;
             case ONE:
-                if (ch == 'E') {
+                if (ch == 'e') {
                     currentState = State.TWO;
-                } else if (ch == 'T') {
+                } else if (ch == 't') {
                     currentState = State.ONE;
                 } else {
                     currentState = State.S;
                 }
                 break;
             case TWO:
-                if (ch == 'S') {
+                if (ch == 's') {
                     currentState = State.THREE;
-                } else if (ch == 'T') {
+                } else if (ch == 't') {
                     currentState = State.ONE;
                 } else {
                     currentState = State.S;
                 }
                 break;
             case THREE:
-                if (ch == 'T') {
+                if (ch == 't') {
                     currentState = State.F;
                 } else {
-                    currentState = State.S;
+                    currentState = State.THREE;
                 }
                 break;
             case F:
