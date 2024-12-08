@@ -1,125 +1,40 @@
 import org.example.FiniteStateMachine;
-import org.junit.jupiter.api.Test;
+import org.example.State;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FiniteStateMachineTest {
 
+    static Stream<Object[]> provideTestCases() {
+        return Stream.of(
+                new Object[]{"abcTESTabc", State.F},
+                new Object[]{"abcTES", State.THREE},
+                new Object[]{"abcTE", State.TWO},
+                new Object[]{"abcT", State.ONE},
+                new Object[]{"abc", State.S},
+                new Object[]{"TEST", State.F},
+                new Object[]{"TES", State.THREE},
+                new Object[]{"TE", State.TWO},
+                new Object[]{"T", State.ONE},
+                new Object[]{"TETEST", State.F},
+                new Object[]{"TEA", State.TWO},
+                new Object[]{"TESA", State.THREE},
+                new Object[]{"TESTING", State.F},
+                new Object[]{"abcTESabc", State.THREE},
+                new Object[]{"abcTEabc", State.TWO},
+                new Object[]{"abcTabc", State.ONE}
+        );
+    }
+
     @ParameterizedTest
-    @CsvSource({
-            "abcTESTabc, F",
-            "abcTES, THREE",
-            "abcTE, TWO",
-            "abcT, ONE",
-            "abc, S",
-            "TEST, F",
-            "TES, THREE",
-            "TE, TWO",
-            "T, ONE",
-            "E, S",
-            "S, S",
-            "TETEST, F"
-    })
-    void testFiniteStateMachine(String input, String expectedState) {
+    @MethodSource("provideTestCases")
+    void testFiniteStateMachine(String input, State expectedState) {
         FiniteStateMachine fsm = new FiniteStateMachine();
         fsm.processString(input);
-        assertEquals(FiniteStateMachine.State.valueOf(expectedState), fsm.getCurrentState());
-    }
-
-    @Test
-    void testFinalStateRecognition() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("abcTESTabc");
-        assertTrue(fsm.isFinalState());
-    }
-
-    @Test
-    void testDoesNotReachFinalState() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("abcTES");
-        assertEquals(FiniteStateMachine.State.THREE, fsm.getCurrentState());
-        assertTrue(!fsm.isFinalState());
-    }
-
-    @Test
-    void testOneStateRecognitionFromABC() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("abcT");
-        assertEquals(FiniteStateMachine.State.ONE, fsm.getCurrentState());
-        assertTrue(!fsm.isFinalState());
-    }
-
-    @Test
-    void testMultipleTransitions() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("TETEST");
-        assertEquals(FiniteStateMachine.State.F, fsm.getCurrentState());
-        assertTrue(fsm.isFinalState());
-    }
-
-    @Test
-    void testTestStateRecognition() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("TEST");
-        assertEquals(FiniteStateMachine.State.F, fsm.getCurrentState());
-        assertTrue(fsm.isFinalState());
-    }
-
-    @Test
-    void testThreeStateRecognition() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("TES");
-        assertEquals(FiniteStateMachine.State.THREE, fsm.getCurrentState());
-        assertTrue(!fsm.isFinalState());
-    }
-
-    @Test
-    void testTwoStateRecognition() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("TE");
-        assertEquals(FiniteStateMachine.State.TWO, fsm.getCurrentState());
-        assertTrue(!fsm.isFinalState());
-    }
-
-    @Test
-    void testOneStateRecognition() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("T");
-        assertEquals(FiniteStateMachine.State.ONE, fsm.getCurrentState());
-        assertTrue(!fsm.isFinalState());
-    }
-
-    @Test
-    void testSStateRecognition() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("abc");
-        assertEquals(FiniteStateMachine.State.S, fsm.getCurrentState());
-        assertTrue(!fsm.isFinalState());
-    }
-
-    @Test
-    void testEmptyInput() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("");
-        assertEquals(FiniteStateMachine.State.S, fsm.getCurrentState());
-        assertTrue(!fsm.isFinalState());
-    }
-    @Test
-    void testRepeatedTInTheMiddle() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("TETTEST");
-        assertEquals(FiniteStateMachine.State.F, fsm.getCurrentState());
-        assertTrue(fsm.isFinalState());
-    }
-
-    @Test
-    void testIncorrectTransitionAfterT() {
-        FiniteStateMachine fsm = new FiniteStateMachine();
-        fsm.processString("TESTT");
-        assertEquals(FiniteStateMachine.State.F, fsm.getCurrentState());
-        assertTrue(fsm.isFinalState());
+        assertEquals(expectedState, fsm.getCurrentState());
     }
 }

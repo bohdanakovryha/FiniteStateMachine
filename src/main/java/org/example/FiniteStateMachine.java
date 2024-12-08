@@ -2,10 +2,6 @@ package org.example;
 
 public class FiniteStateMachine {
 
-    public enum State {
-        S, ONE, TWO, THREE, F
-    }
-
     private State currentState;
 
     public FiniteStateMachine() {
@@ -20,47 +16,15 @@ public class FiniteStateMachine {
     }
 
     private void processChar(char ch) {
-        switch (currentState) {
-            case S:
-                if (ch == 't') {
-                    currentState = State.ONE;
-                }
-                break;
-            case ONE:
-                if (ch == 'e') {
-                    currentState = State.TWO;
-                } else if (ch == 't') {
-                    currentState = State.ONE;
-                } else {
-                    currentState = State.S;
-                }
-                break;
-            case TWO:
-                if (ch == 's') {
-                    currentState = State.THREE;
-                } else if (ch == 't') {
-                    currentState = State.ONE;
-                } else {
-                    currentState = State.S;
-                }
-                break;
-            case THREE:
-                if (ch == 't') {
-                    currentState = State.F;
-                } else {
-                    currentState = State.THREE;
-                }
-                break;
-            case F:
-                break;
-        }
+        currentState = switch (currentState) {
+            case S -> (ch == 't') ? State.ONE : State.S;
+            case ONE -> (ch == 'e') ? State.TWO : State.ONE;
+            case TWO -> (ch == 's') ? State.THREE : State.TWO;
+            case THREE -> (ch == 't') ? State.F : State.THREE;
+            case F -> State.F;
+        };
     }
-
     public State getCurrentState() {
         return currentState;
-    }
-
-    public boolean isFinalState() {
-        return currentState == State.F;
     }
 }
